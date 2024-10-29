@@ -20,6 +20,7 @@ import org.jline.terminal.Attributes.{ InputFlag, LocalFlag }
 import org.jline.terminal.Terminal.SignalHandler
 import org.jline.terminal.impl.{ AbstractTerminal, DumbTerminal }
 import org.jline.terminal.spi.{ SystemStream, TerminalProvider }
+import sbt.internal.util.Terminal.hasConsole
 import scala.collection.JavaConverters._
 import scala.util.Try
 import java.util.concurrent.LinkedBlockingQueue
@@ -31,7 +32,7 @@ private[sbt] object JLine3 {
     val term =
       org.jline.terminal.TerminalBuilder
         .builder()
-        .system(System.console != null)
+        .system(hasConsole)
         .paused(true)
         .build()
     initialAttributes.get match {
