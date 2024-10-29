@@ -130,7 +130,7 @@ object LineReader {
           Option(mask.map(reader.readLine(prompt, _)).getOrElse(reader.readLine(prompt)))
         } catch {
           case e: EndOfFileException =>
-            if (terminal == Terminal.console && System.console == null) None
+            if (terminal == Terminal.console && !Terminal.hasConsole) None
             else Some("exit")
           case _: IOError | _: ClosedException => Some("exit")
           case _: UserInterruptException | _: ClosedByInterruptException |
