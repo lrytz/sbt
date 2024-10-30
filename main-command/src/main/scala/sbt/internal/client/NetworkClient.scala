@@ -15,8 +15,10 @@ import java.lang.ProcessBuilder.Redirect
 import java.net.{ Socket, SocketException }
 import java.nio.file.Files
 import java.util.UUID
+import java.util.Date
 import java.util.concurrent.atomic.{ AtomicBoolean, AtomicReference }
 import java.util.concurrent.{ ConcurrentHashMap, LinkedBlockingQueue, TimeUnit }
+import java.text.DateFormat
 
 import sbt.BasicCommandStrings.{ DashDashDetachStdio, DashDashServer, Shutdown, TerminateAction }
 import sbt.internal.client.NetworkClient.Arguments
@@ -532,7 +534,7 @@ class NetworkClient(
       case null =>
       case (q, startTime, name) =>
         val now = System.currentTimeMillis
-        val message = timing(startTime, now)
+        val message = NetworkClient.timing(startTime, now)
         val ec = exitCode
         if (batchMode.get || !attached.get) {
           if (ec == 0) console.success(message)
@@ -1006,26 +1008,6 @@ class NetworkClient(
       RawInputThread.this.interrupt()
     }
   }
-
-  // copied from Aggregation
-  private def timing(startTime: Long, endTime: Long): String = {
-    import java.text.DateFormat
-    val format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM)
-    val nowString = format.format(new java.util.Date(endTime)).replace("\u202F", "\u0020")
-    val total = math.max(0, (endTime - startTime + 500) / 1000)
-    val totalString = s"$total s" +
-      (if (total <= 60) ""
-       else {
-         val maybeHours = total / 3600 match {
-           case 0 => ""
-           case h => f"$h%02d:"
-         }
-         val mins = f"${total % 3600 / 60}%02d"
-         val secs = f"${total % 60}%02d"
-         s" ($maybeHours$mins:$secs)"
-       })
-    s"Total time: $totalString, completed $nowString"
-  }
 }
 
 object NetworkClient {
@@ -1136,6 +1118,32 @@ object NetworkClient {
       bsp,
       launchJar
     )
+  }
+
+  private[sbt] def timing(format: DateFormat, startTime: Long, endTime: Long): String = {
+    // sbt#7558
+    // JDK 20+ emits special space (NNBSP) as part of formatted date
+    // Which sometimes becomes garbled in standard output
+    // Therefore we replace NNBSP (u202f) with standard space (u0020)
+    val nowString = format.format(new Date(endTime)).replace("\u202F", "\u0020")
+    val total = (endTime - startTime + 500) / 1000
+    val totalString = s"$total s" +
+      (if (total <= 60) ""
+       else {
+         val maybeHours = total / 3600 match {
+           case 0 => ""
+           case h => f"$h%02d:"
+         }
+         val mins = f"${total % 3600 / 60}%02d"
+         val secs = f"${total % 60}%02d"
+         s" ($maybeHours$mins:$secs)"
+       })
+    s"Total time: $totalString, completed $nowString"
+  }
+
+  private[sbt] def timing(startTime: Long, endTime: Long): String = {
+    val format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM)
+    timing(format, startTime, endTime)
   }
 
   def client(
