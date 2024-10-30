@@ -1011,7 +1011,7 @@ class NetworkClient(
   private def timing(startTime: Long, endTime: Long): String = {
     import java.text.DateFormat
     val format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM)
-    val nowString = format.format(new java.util.Date(endTime))
+    val nowString = format.format(new java.util.Date(endTime)).replace("\u202F", "\u0020")
     val total = math.max(0, (endTime - startTime + 500) / 1000)
     val totalString = s"$total s" +
       (if (total <= 60) ""

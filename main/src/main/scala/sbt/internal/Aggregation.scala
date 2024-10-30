@@ -152,7 +152,7 @@ object Aggregation {
   }
 
   def timing(format: java.text.DateFormat, startTime: Long, endTime: Long): String = {
-    val nowString = format.format(new java.util.Date(endTime))
+    val nowString = format.format(new java.util.Date(endTime)).replace("\u202F", "\u0020")
     val total = (endTime - startTime + 500) / 1000
     val totalString = s"$total s" +
       (if (total <= 60) ""
