@@ -1176,13 +1176,8 @@ lazy val sbtClientProj = (project in file("client"))
     nativeImageReady := { () =>
       ()
     },
-    if (isArmArchitecture)
-      Seq(
-        nativeImageVersion := "23.0",
-        nativeImageJvm := "graalvm-java23",
-      )
-    else Nil,
-    nativeImageInstalled := !isArmArchitecture,
+    nativeImageVersion := "23.0",
+    nativeImageJvm := "graalvm-java23",
     nativeImageOutput := {
       val outputDir = (target.value / "bin").toPath
       if (!Files.exists(outputDir)) {
@@ -1204,7 +1199,7 @@ lazy val sbtClientProj = (project in file("client"))
       s"-H:Name=${target.value / "bin" / "sbtn"}",
     ) ++ (if (isLinux && isArmArchitecture)
             Seq("-H:PageSize=65536") // Make sure binary runs on kernels with page size set to 4k, 16 and 64k
-          else Nil) ++ (if (isLinux && !isArmArchitecture) Seq("--static", "--libc=musl") else Nil),
+          else Nil),
     buildThinClient := {
       val isFish = Def.spaceDelimited("").parsed.headOption.fold(false)(_ == "--fish")
       val ext = if (isWin) ".bat" else if (isFish) ".fish" else ".sh"
