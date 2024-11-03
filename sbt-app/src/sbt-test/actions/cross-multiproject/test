@@ -21,6 +21,12 @@ $ exists sbt-foo/target/scala-2.12
 $ exists ref/target/scala-2.12
 -$ exists ref/target/scala-2.13
 
+# test safe switching
+> clean
+> ++ 2.12.20 -v libProj/compile
+$ exists lib/target/scala-2.12
+-$ exists lib/target/scala-2.13
+
 # Test legacy cross build with command support
 # > clean
 # > + build
