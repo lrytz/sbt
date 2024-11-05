@@ -30,7 +30,7 @@ private[sbt] object AnalysisUtil {
     MixedAnalyzingCompiler.staticCachedStore(
       analysisFile = analysisFile,
       useTextAnalysis = useTextAnalysis,
-      useConsistent = false,
+      useConsistent = useConsistent,
       mappers = ReadWriteMappers.getEmptyMappers(),
       sort = true,
       parallelism = parallelism,
