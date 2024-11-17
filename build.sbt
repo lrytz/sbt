@@ -1170,7 +1170,6 @@ lazy val sbtClientProj = (project in file("client"))
     mimaPreviousArtifacts := Set.empty,
     crossPaths := false,
     exportJars := true,
-    libraryDependencies += jansi,
     libraryDependencies += scalatest % Test,
     Compile / mainClass := Some("sbt.client.Client"),
     nativeImageReady := { () =>
