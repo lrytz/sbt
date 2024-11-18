@@ -180,7 +180,7 @@ acquire_sbtn () {
   local archive_target=
   local url=
   local arch="x86_64"
-  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "linux"* ]]; then
     arch=$(uname -m)
     if [[ "$arch" == "aarch64" ]] || [[ "$arch" == "x86_64" ]]; then
       archive_target="$p/sbtn-${arch}-pc-linux-${sbtn_v}.tar.gz"
