@@ -493,7 +493,7 @@ run() {
   }
 
   # TODO - java check should be configurable...
-  checkJava "6"
+  checkJava "8"
 
   # Java 9 support
   copyRt
