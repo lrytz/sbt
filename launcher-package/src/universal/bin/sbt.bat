@@ -910,7 +910,7 @@ if !sbtBinaryV_1! geq 2 (
 exit /B 0
 
 :checkjava
-set /a required_version=6
+set /a required_version=8
 if /I !JAVA_VERSION! GEQ !required_version! (
   exit /B 0
 )
