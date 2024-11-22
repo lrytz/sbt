@@ -147,8 +147,9 @@ object DependencyTreeSettings {
                 .asciiTree(GraphTransformations.reverseGraphStartingAt(graph, module), graphWidth)
             }
             .mkString("\n")
-
-        streams.value.log.info(output)
+        synchronized {
+          streams.value.log.info(output)
+        }
         output
       },
     ) ++
@@ -171,7 +172,9 @@ object DependencyTreeSettings {
       key := {
         val s = streams.value
         val str = (key / asString).value
-        s.log.info(str)
+        synchronized {
+          s.log.info(str)
+        }
       },
       key / toFile := {
         val (targetFile, force) = targetFileAndForceParser.parsed
