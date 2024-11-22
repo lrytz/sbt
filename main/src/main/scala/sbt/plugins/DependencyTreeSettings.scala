@@ -245,7 +245,10 @@ object DependencyTreeSettings {
     Def.task {
       val uri = uriKey.value
       streams.value.log.info(s"Opening ${uri} in browser...")
-      java.awt.Desktop.getDesktop.browse(uri)
+      val desktop = java.awt.Desktop.getDesktop
+      desktop.synchronized {
+        desktop.browse(uri)
+      }
       uri
     }
 
