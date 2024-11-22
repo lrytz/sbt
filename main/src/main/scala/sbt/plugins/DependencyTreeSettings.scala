@@ -198,7 +198,7 @@ object DependencyTreeSettings {
         rendering.DOT.AngleBrackets,
         dependencyDotNodeColors.value
       )
-      val link = DagreHTML.createLink(dotGraph, target.value)
+      val link = DagreHTML.createLink(dotGraph, dependencyBrowseGraphTarget.value)
       streams.value.log.info(s"HTML graph written to $link")
       link
     }
@@ -207,7 +207,7 @@ object DependencyTreeSettings {
     Def.task {
       val graph = dependencyTreeModuleGraph0.value
       val renderedTree = TreeView.createJson(graph)
-      val link = TreeView.createLink(renderedTree, target.value)
+      val link = TreeView.createLink(renderedTree, dependencyBrowseTreeTarget.value)
       streams.value.log.info(s"HTML tree written to $link")
       link
     }
