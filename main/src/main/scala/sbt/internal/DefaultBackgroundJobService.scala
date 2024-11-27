@@ -114,7 +114,8 @@ private[sbt] abstract class AbstractBackgroundJobService extends BackgroundJobSe
       override val spawningTask: ScopedKey[_],
       val logger: ManagedLogger,
       val workingDirectory: File,
-      val job: BackgroundJob
+      val job: BackgroundJob,
+      @volatile var isAutoCancel: Boolean = false,
   ) extends AbstractJobHandle {
     // EC for onStop handler below
     implicit val executionContext: ExecutionContext =
@@ -140,6 +141,7 @@ private[sbt] abstract class AbstractBackgroundJobService extends BackgroundJobSe
   private final class DeadHandle(override val id: Long, override val humanReadableName: String)
       extends AbstractJobHandle {
     override val spawningTask: ScopedKey[_] = unknownTask
+    override val isAutoCancel = false
   }
 
   def doRunInBackground(
@@ -513,7 +515,7 @@ private[sbt] object DefaultBackgroundJobService {
     backgroundJobServices
       .values()
       .forEach(jobService => {
-        jobService.jobs.foreach(jobService.stop)
+        jobService.jobs.filter(_.isAutoCancel).foreach(jobService.stop)
       })
   }
 
