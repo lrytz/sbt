@@ -2039,6 +2039,11 @@ object Defaults extends BuildCommon {
   def foregroundRunMainTask: Initialize[InputTask[Unit]] =
     Def.inputTask {
       val handle = bgRunMain.evaluated
+      handle match {
+        case threadJobHandle: AbstractBackgroundJobService#ThreadJobHandle =>
+          threadJobHandle.isAutoCancel = true
+        case _ =>
+      }
       val service = bgJobService.value
       service.waitForTry(handle).get
     }
@@ -2047,6 +2052,11 @@ object Defaults extends BuildCommon {
   def foregroundRunTask: Initialize[InputTask[Unit]] =
     Def.inputTask {
       val handle = bgRun.evaluated
+      handle match {
+        case threadJobHandle: AbstractBackgroundJobService#ThreadJobHandle =>
+          threadJobHandle.isAutoCancel = true
+        case _ =>
+      }
       val service = bgJobService.value
       service.waitForTry(handle).get
     }
