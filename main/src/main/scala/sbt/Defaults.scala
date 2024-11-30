@@ -710,7 +710,20 @@ object Defaults extends BuildCommon {
       crossPaths.value
     ),
     cleanIvy := IvyActions.cleanCachedResolutionCache(ivyModule.value, streams.value.log),
-    clean := clean.dependsOn(cleanIvy).value,
+    clean := {
+      val _ = cleanIvy.value
+      try {
+        val store = AnalysisUtil.staticCachedStore(
+          analysisFile = (Compile / compileAnalysisFile).value.toPath,
+          useTextAnalysis = !(Compile / enableBinaryCompileAnalysis).value,
+          useConsistent = (Compile / enableConsistentCompileAnalysis).value,
+        )
+        store.clearCache()
+      } catch {
+        case NonFatal(_) => ()
+      }
+      clean.value
+    },
     scalaCompilerBridgeBinaryJar := Def.settingDyn {
       val sv = scalaVersion.value
       if (ScalaArtifacts.isScala3(sv) || VersionNumber(sv)
