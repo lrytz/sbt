@@ -32,7 +32,8 @@ private[sbt] object AnalysisUtil {
       useTextAnalysis = useTextAnalysis,
       useConsistent = useConsistent,
       mappers = ReadWriteMappers.getEmptyMappers(),
-      sort = true,
+      // reproducisble = true will wipe out the timestamp, which we need for sbt 1.x
+      reproducible = false,
       parallelism = parallelism,
     )
 }
