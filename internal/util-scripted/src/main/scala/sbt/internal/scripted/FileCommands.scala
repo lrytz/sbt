@@ -56,6 +56,11 @@ class FileCommands(baseDirectory: File) extends BasicStatementHandler {
   def fromStrings(paths: List[String]) = paths.map(fromString)
   def fromString(path: String) = new File(baseDirectory, path)
   def filterFromStrings(exprs: List[String]): List[PathFilter] = {
+    def globs(exprs: List[String]): List[PathFilter] =
+      exprs.map { g =>
+        if (g.startsWith("/")) (Glob(g): PathFilter)
+        else (Glob(baseDirectory, g): PathFilter)
+      }
     def orGlobs = {
       val exprs1 = exprs
         .mkString("")
@@ -63,19 +68,18 @@ class FileCommands(baseDirectory: File) extends BasicStatementHandler {
         .filter(_ != OR)
         .toList
         .map(_.trim)
-      val combined = exprs1.map(Glob(baseDirectory, _)) match {
+      val combined = globs(exprs1) match {
         case Nil      => sys.error("unexpected Nil")
-        case g :: Nil => (g: PathFilter)
+        case g :: Nil => g
         case g :: gs =>
-          gs.foldLeft(g: PathFilter) {
-            case (acc, g) =>
-              acc || (g: PathFilter)
+          gs.foldLeft(g) {
+            case (acc, g) => acc || g
           }
       }
       List(combined)
     }
     if (exprs.contains("||")) orGlobs
-    else exprs.map(Glob(baseDirectory, _): PathFilter)
+    else globs(exprs)
   }
 
   def touch(paths: List[String]): Unit = IO.touch(fromStrings(paths))
