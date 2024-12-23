@@ -265,6 +265,7 @@ object Defaults extends BuildCommon {
       csrLogger := LMCoursier.coursierLoggerTask.value,
       csrMavenProfiles :== Set.empty,
       csrReconciliations :== LMCoursier.relaxedForAllModules,
+      csrMavenDependencyOverride :== false,
       csrSameVersions := Seq(
         ScalaArtifacts.Artifacts.map(a => InclExclRule(scalaOrganization.value, a)).toSet
       )
