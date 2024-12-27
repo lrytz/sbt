@@ -930,10 +930,10 @@ object Defaults extends BuildCommon {
     }.value,
     clean := {
       val _ = (compileOutputs / clean).value
-      val setup = compileIncSetup.value
+      val analysisFile = compileAnalysisFile.value
       try {
         val store = AnalysisUtil.staticCachedStore(
-          analysisFile = setup.cacheFile.toPath,
+          analysisFile = analysisFile.toPath,
           useTextAnalysis = !enableBinaryCompileAnalysis.value,
           useConsistent = enableConsistentCompileAnalysis.value,
         )
