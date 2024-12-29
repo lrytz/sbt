@@ -928,7 +928,20 @@ object Defaults extends BuildCommon {
         tastyFiles.map(_.getAbsoluteFile)
       } else Nil
     }.value,
-    clean := (compileOutputs / clean).value,
+    clean := {
+      val _ = (compileOutputs / clean).value
+      val analysisFile = compileAnalysisFile.value
+      try {
+        val store = AnalysisUtil.staticCachedStore(
+          analysisFile = analysisFile.toPath,
+          useTextAnalysis = !enableBinaryCompileAnalysis.value,
+          useConsistent = enableConsistentCompileAnalysis.value,
+        )
+        store.clearCache()
+      } catch {
+        case NonFatal(_) => ()
+      }
+    },
     earlyOutputPing := Def.promise[Boolean],
     compileProgress := {
       val s = streams.value
