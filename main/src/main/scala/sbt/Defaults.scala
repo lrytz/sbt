@@ -2580,9 +2580,9 @@ object Defaults extends BuildCommon {
   private[sbt] def jnone[A]: Optional[A] = none[A].toOptional
   def compileAnalysisSettings: Seq[Setting[_]] = Seq(
     previousCompile := {
-      val setup = compileIncSetup.value
+      val analysisFile = compileAnalysisFile.value
       val store = AnalysisUtil.staticCachedStore(
-        analysisFile = setup.cacheFile.toPath,
+        analysisFile = analysisFile.toPath,
         useTextAnalysis = !enableBinaryCompileAnalysis.value,
         useConsistent = enableConsistentCompileAnalysis.value,
       )
