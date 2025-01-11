@@ -241,7 +241,6 @@ final class NetworkChannel(
       }
     }
   }
-  thread.start()
 
   private[sbt] def isLanguageServerProtocol: Boolean = true
 
@@ -365,7 +364,6 @@ final class NetworkChannel(
     impl()
   }, s"sbt-$name-write-thread")
   writeThread.setDaemon(true)
-  writeThread.start()
 
   def publishBytes(event: Array[Byte], delimit: Boolean): Unit =
     try pendingWrites.put(event -> delimit)
@@ -914,6 +912,9 @@ final class NetworkChannel(
     }
   }
   private[sbt] def isAttached: Boolean = attached.get
+
+  thread.start()
+  writeThread.start()
 }
 
 object NetworkChannel {
