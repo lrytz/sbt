@@ -163,7 +163,7 @@ final class NetworkChannel(
       }
   }
 
-  val thread = new Thread(s"sbt-networkchannel-${connection.getPort}") {
+  private[this] val thread = new Thread(s"sbt-networkchannel-${connection.getPort}") {
     private val ct = "Content-Type: "
     private val x1 = "application/sbt-x1"
     override def run(): Unit = {
